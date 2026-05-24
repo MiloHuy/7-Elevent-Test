@@ -44,7 +44,7 @@ Sau khi khởi động, ứng dụng chạy tại: **http://localhost:8080**
 |---|---|
 | Cửa hàng (User) | http://localhost:8080/ |
 | Quản trị (Admin) | http://localhost:8080/admin-products.html |
-| H2 Console | http://localhost:8080/h2-console |
+| Quản trị đơn hàng (Admin) | http://localhost:8080/admin-orders.html |
 
 **H2 Console credentials:**
 - JDBC URL: `jdbc:h2:mem:testdb`
