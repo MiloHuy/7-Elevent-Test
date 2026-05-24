@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexShop | Admin Orders</title>
+    <title>ShopDemo | Admin Orders</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
     <nav>
-        <a href="/" class="brand">NexShop Admin</a>
+        <a href="/" class="brand">ShopDemo Admin</a>
         <div class="nav-links">
-            <a href="/" >Store View</a>
+            <a href="/">Store View</a>
             <a href="/admin-products.html">Products</a>
             <a href="/admin-orders.html" class="active">Orders</a>
         </div>
@@ -64,7 +66,7 @@
         function renderTable() {
             const tbody = document.getElementById('order-table-body');
             tbody.innerHTML = '';
-            orders.sort((a,b) => b.id - a.id).forEach(o => {
+            orders.sort((a, b) => b.id - a.id).forEach(o => {
                 const date = new Date(o.orderDate).toLocaleString();
                 tbody.innerHTML += `
                     <tr>
@@ -85,7 +87,7 @@
 
         function viewOrder(id) {
             const o = orders.find(x => x.id === id);
-            if(!o) return;
+            if (!o) return;
 
             let itemsHtml = o.items.map(i => `
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 0.5rem 0;">
@@ -122,4 +124,5 @@
         fetchOrders();
     </script>
 </body>
+
 </html>
