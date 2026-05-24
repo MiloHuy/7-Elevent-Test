@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexShop | Admin Orders</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/" class="brand">NexShop Admin</a>
+        <div class="nav-links">
+            <a href="/" >Store View</a>
+            <a href="/admin-products.html">Products</a>
+            <a href="/admin-orders.html" class="active">Orders</a>
+        </div>
+    </nav>
+
+    <div class="container animate-fade-in">
+        <div class="header-flex">
+            <h2>Order Management</h2>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Total Amount</th>
+                        <th>Items</th>
+                    </tr>
+                </thead>
+                <tbody id="order-table-body">
+                    <!-- Data injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal-overlay" id="order-modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div id="order-details-content">
+                <!-- Details injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let orders = [];
+
+        async function fetchOrders() {
+            const res = await fetch('/api/orders');
+            orders = await res.json();
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('order-table-body');
+            tbody.innerHTML = '';
+            orders.sort((a,b) => b.id - a.id).forEach(o => {
+                const date = new Date(o.orderDate).toLocaleString();
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>#${o.id}</strong></td>
+                        <td>${date}</td>
+                        <td>
+                            ${o.customerName}<br>
+                            <small class="text-secondary">${o.customerPhone}</small>
+                        </td>
+                        <td class="product-price">$${o.totalAmount.toFixed(2)}</td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.85rem;" onclick="viewOrder(${o.id})">View ${o.items.length} items</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function viewOrder(id) {
+            const o = orders.find(x => x.id === id);
+            if(!o) return;
+
+            let itemsHtml = o.items.map(i => `
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 0.5rem 0;">
+                    <div>
+                        <strong>${i.product ? i.product.name : 'Unknown'}</strong> x ${i.quantity}
+                    </div>
+                    <div>$${(i.price * i.quantity).toFixed(2)}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('order-details-content').innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    <p><strong>Customer:</strong> ${o.customerName}</p>
+                    <p><strong>Phone:</strong> ${o.customerPhone}</p>
+                    <p><strong>Address:</strong> ${o.address}</p>
+                    <p><strong>Date:</strong> ${new Date(o.orderDate).toLocaleString()}</p>
+                </div>
+                <h4>Items</h4>
+                <div style="margin-top: 0.5rem; margin-bottom: 1rem;">
+                    ${itemsHtml}
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: bold;">
+                    <span>Total</span>
+                    <span class="product-price">$${o.totalAmount.toFixed(2)}</span>
+                </div>
+            `;
+            document.getElementById('order-modal-overlay').classList.add('active');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-modal-overlay').classList.remove('active');
+        }
+
+        fetchOrders();
+    </script>
+</body>
+</html>
